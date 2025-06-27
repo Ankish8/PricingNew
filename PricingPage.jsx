@@ -14,13 +14,14 @@ import { RetroGrid } from './src/components/magicui/retro-grid';
 import Marquee from './src/components/magicui/marquee';
 import FAQAccordion from './src/components/magicui/faq-accordion';
 
-// MagicUI Pointer Component
-const Pointer = ({ children, content, side = 'top' }) => {
+// Info Button Component with Click Tooltip
+const InfoButton = ({ content, side = 'top' }) => {
   const [isVisible, setIsVisible] = React.useState(false);
   const [position, setPosition] = React.useState({ x: 0, y: 0 });
 
-  const handleMouseEnter = (e) => {
-    setIsVisible(true);
+  const handleClick = (e) => {
+    e.stopPropagation();
+    setIsVisible(!isVisible);
     const rect = e.currentTarget.getBoundingClientRect();
     setPosition({
       x: rect.left + rect.width / 2,
@@ -28,23 +29,50 @@ const Pointer = ({ children, content, side = 'top' }) => {
     });
   };
 
-  const handleMouseLeave = () => {
+  const handleClickOutside = React.useCallback((e) => {
     setIsVisible(false);
-  };
+  }, []);
+
+  React.useEffect(() => {
+    if (isVisible) {
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
+    }
+  }, [isVisible, handleClickOutside]);
 
   return (
     <>
-      <div
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        style={{ 
-          cursor: 'help',
-          display: 'inline-block',
-          transition: 'all 0.2s ease'
+      <button
+        onClick={handleClick}
+        style={{
+          background: 'rgba(122, 33, 135, 0.1)',
+          border: '1px solid rgba(122, 33, 135, 0.2)',
+          borderRadius: '50%',
+          width: '20px',
+          height: '20px',
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+          marginLeft: '8px',
+          fontSize: '12px',
+          fontWeight: '600',
+          color: '#7A2187',
+          transition: 'all 0.2s ease',
+          outline: 'none',
+          verticalAlign: 'middle'
+        }}
+        onMouseEnter={(e) => {
+          e.target.style.background = 'rgba(122, 33, 135, 0.15)';
+          e.target.style.borderColor = 'rgba(122, 33, 135, 0.3)';
+        }}
+        onMouseLeave={(e) => {
+          e.target.style.background = 'rgba(122, 33, 135, 0.1)';
+          e.target.style.borderColor = 'rgba(122, 33, 135, 0.2)';
         }}
       >
-        {children}
-      </div>
+        i
+      </button>
       {isVisible && (
         <div
           style={{
@@ -53,8 +81,9 @@ const Pointer = ({ children, content, side = 'top' }) => {
             top: position.y,
             transform: 'translateX(-50%) translateY(-100%)',
             zIndex: 1000,
-            pointerEvents: 'none'
+            pointerEvents: 'auto'
           }}
+          onClick={(e) => e.stopPropagation()}
         >
           <div
             style={{
@@ -89,6 +118,16 @@ const Pointer = ({ children, content, side = 'top' }) => {
         </div>
       )}
     </>
+  );
+};
+
+// Updated Pointer Component for backward compatibility
+const Pointer = ({ children, content, side = 'top' }) => {
+  return (
+    <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+      {children}
+      <InfoButton content={content} side={side} />
+    </span>
   );
 };
 
@@ -214,7 +253,6 @@ const PricingPage = () => {
   }, []);
   
   const priceData = {
-    monthly: { price: '₹2,000', period: '/month', savings: 0, originalPrice: null },
     halfyearly: { price: '₹10,000', period: '/6 months', savings: 2000, originalPrice: '₹12,000' },
     annual: { price: '₹15,000', period: '/year', savings: 9000, originalPrice: '₹24,000' }
   };
@@ -224,7 +262,6 @@ const PricingPage = () => {
   
   // Use animated number hook for badge display
   const getBadgeValue = (cycle) => {
-    if (cycle === 'monthly') return 24000;
     return priceData[cycle].savings;
   };
   
@@ -235,9 +272,6 @@ const PricingPage = () => {
   
   // Format badge display
   const formatBadgeDisplay = (number, cycle) => {
-    if (cycle === 'monthly') {
-      return `₹${number.toLocaleString('en-IN')} total annual cost`;
-    }
     return `₹${number.toLocaleString('en-IN')} savings`;
   };
 
@@ -509,15 +543,13 @@ const PricingPage = () => {
                   }}>
                     ₹{finalPrice.toLocaleString('en-IN')}
                   </div>
-                  {selectedCycle !== 'monthly' && (
-                    <div style={{
-                      fontSize: '0.8rem',
-                      color: '#5F6368',
-                      fontStyle: 'italic'
-                    }}>
-                      ₹{Math.round(finalPrice / (selectedCycle === 'annual' ? 12 : 6)).toLocaleString('en-IN')}/month
-                    </div>
-                  )}
+                  <div style={{
+                    fontSize: '0.8rem',
+                    color: '#5F6368',
+                    fontStyle: 'italic'
+                  }}>
+                    ₹{Math.round(finalPrice / (selectedCycle === 'annual' ? 12 : 6)).toLocaleString('en-IN')}/month
+                  </div>
                   {totalDiscount > 0 && (
                     <div style={{
                       fontSize: '0.75rem',
@@ -1142,15 +1174,15 @@ const PricingPage = () => {
                 style={{
                   background: '#FFFFFF',
                   borderRadius: '12px',
-                  padding: '0.5rem',
+                  padding: '0.625rem',
                   boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
                   position: 'relative',
                   display: 'flex',
-                  gap: '0.5rem',
+                  gap: '0.375rem',
                   width: 'fit-content'
                 }}
               >
-                {['annual', 'halfyearly', 'monthly'].map((cycle) => {
+                {['annual', 'halfyearly'].map((cycle) => {
                   const isAnnual = cycle === 'annual';
                   const isSelected = selectedCycle === cycle;
                   
@@ -1161,7 +1193,6 @@ const PricingPage = () => {
                       title={
                         isAnnual && !isSelected ? 'Save ₹9,000 annually - Only ₹1,250/month' :
                         cycle === 'halfyearly' && !isSelected ? 'Save ₹4,000 - Only ₹1,667/month' :
-                        cycle === 'monthly' && !isSelected ? 'Pay ₹2,000 every month' :
                         undefined
                       }
                       style={{
@@ -1172,7 +1203,7 @@ const PricingPage = () => {
                         borderRadius: '8px',
                         fontWeight: isAnnual ? '700' : '600',
                         fontSize: '0.9rem',
-                        margin: '0 0.125rem',
+                        margin: '0',
                         color: isSelected ? '#FFFFFF' : (isAnnual ? '#202124' : '#80868B'),
                         cursor: 'pointer',
                         transition: 'all 0.3s ease',
@@ -1182,10 +1213,12 @@ const PricingPage = () => {
                         alignItems: 'center',
                         justifyContent: 'center',
                         letterSpacing: isAnnual ? '-0.01em' : '0',
-                        boxShadow: isAnnual && !isSelected ? '0 0 0 1px rgba(122, 33, 135, 0.1)' : 'none'
+                        boxShadow: isAnnual && !isSelected ? '0 0 0 1px rgba(122, 33, 135, 0.1)' : 'none',
+                        flex: 1,
+                        whiteSpace: 'nowrap'
                       }}
                     >
-                      {isAnnual ? '★ Annual' : cycle === 'monthly' ? 'Monthly' : '6 Months'}
+                      {isAnnual ? '★ Annual' : '6 Months'}
                     </button>
                   );
                 })}
@@ -1197,14 +1230,12 @@ const PricingPage = () => {
                       'linear-gradient(135deg, #7A2187 0%, #9B4AA3 100%)' : '#7A2187',
                     borderRadius: '8px',
                     transition: 'all 0.3s ease',
-                    top: '0.5rem',
-                    left: '0.5rem',
-                    width: 'calc(33.333% - 0.333rem)',
-                    height: 'calc(100% - 1rem)',
+                    top: '0.625rem',
+                    left: '0.625rem',
+                    width: 'calc(50% - 0.8125rem)',
+                    height: 'calc(100% - 1.25rem)',
                     zIndex: 1,
-                    transform: selectedCycle === 'annual' ? 'translateX(0%)' : 
-                               selectedCycle === 'halfyearly' ? 'translateX(100%)' : 
-                               'translateX(200%)',
+                    transform: selectedCycle === 'annual' ? 'translateX(0%)' : 'translateX(calc(100% + 0.375rem))',
                     boxShadow: selectedCycle === 'annual' ? 
                       '0 4px 12px rgba(122, 33, 135, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1) inset' : 
                       '0 2px 4px rgba(122, 33, 135, 0.1)'
@@ -1229,19 +1260,15 @@ const PricingPage = () => {
               <div className="features-list">
                 <div className="feature-item limited">
                   <i className="fas fa-exclamation-triangle feature-icon" style={{ color: '#FFC107' }}></i>
-                  <span>1 job application per category</span>
+                  <span>1 opportunity per category</span>
                 </div>
                 <div className="feature-item limited">
                   <i className="fas fa-exclamation-triangle feature-icon" style={{ color: '#FFC107' }}></i>
-                  <span>1 NCET test attempt/year</span>
+                  <span>1 NCET test/year</span>
                 </div>
                 <div className="feature-item limited">
                   <i className="fas fa-exclamation-triangle feature-icon" style={{ color: '#FFC107' }}></i>
-                  <span>5 sandbox instances</span>
-                </div>
-                <div className="feature-item limited">
-                  <i className="fas fa-exclamation-triangle feature-icon" style={{ color: '#FFC107' }}></i>
-                  <span>Limited course access (20%)*</span>
+                  <span>Complete access to 2 courses*</span>
                 </div>
                 <div className="feature-item limited">
                   <i className="fas fa-ban feature-icon" style={{ color: '#DC3545' }}></i>
@@ -1250,6 +1277,10 @@ const PricingPage = () => {
                 <div className="feature-item limited">
                   <i className="fas fa-ban feature-icon" style={{ color: '#DC3545' }}></i>
                   <span>No certificates</span>
+                </div>
+                <div className="feature-item limited">
+                  <i className="fas fa-ban feature-icon" style={{ color: '#DC3545' }}></i>
+                  <span>No live mentorship support</span>
                 </div>
               </div>
               
@@ -1353,22 +1384,20 @@ const PricingPage = () => {
                 </div>
                 
                 {/* Effective Monthly Cost */}
-                {selectedCycle !== 'monthly' && (
-                  <div style={{
-                    textAlign: 'center',
-                    marginTop: '0.25rem',
-                    marginBottom: '0.25rem'
+                <div style={{
+                  textAlign: 'center',
+                  marginTop: '0.25rem',
+                  marginBottom: '0.25rem'
+                }}>
+                  <span style={{
+                    fontSize: '0.875rem',
+                    color: '#5F6368',
+                    fontWeight: '500',
+                    fontStyle: 'italic'
                   }}>
-                    <span style={{
-                      fontSize: '0.875rem',
-                      color: '#5F6368',
-                      fontWeight: '500',
-                      fontStyle: 'italic'
-                    }}>
 Only ₹{selectedCycle === 'annual' ? '1,250' : '1,667'}/month
-                    </span>
-                  </div>
-                )}
+                  </span>
+                </div>
                 
                 {/* Unified Animated Badge */}
                 <div style={{
@@ -1378,17 +1407,14 @@ Only ₹{selectedCycle === 'annual' ? '1,250' : '1,667'}/month
                 }}>
                   <span style={{
                     display: 'inline-block',
-                    background: selectedCycle === 'monthly' ? 'rgba(255, 107, 53, 0.1)' : 
-                               (selectedCycle === 'annual' ? 'rgba(40, 167, 69, 0.15)' : 'rgba(40, 167, 69, 0.1)'),
-                    color: selectedCycle === 'monthly' ? '#FF6B35' : '#28A745',
+                    background: selectedCycle === 'annual' ? 'rgba(40, 167, 69, 0.15)' : 'rgba(40, 167, 69, 0.1)',
+                    color: '#28A745',
                     padding: '0.3rem 0.75rem',
                     borderRadius: '12px',
                     fontSize: '0.8125rem',
                     fontWeight: '500',
-                    border: selectedCycle === 'monthly' ? '1px solid rgba(255, 107, 53, 0.2)' :
-                           `1px solid ${selectedCycle === 'annual' ? 'rgba(40, 167, 69, 0.3)' : 'rgba(40, 167, 69, 0.2)'}`,
-                    boxShadow: selectedCycle === 'annual' ? '0 2px 8px rgba(40, 167, 69, 0.15)' : 
-                              (selectedCycle === 'monthly' ? '0 2px 8px rgba(255, 107, 53, 0.1)' : 'none'),
+                    border: `1px solid ${selectedCycle === 'annual' ? 'rgba(40, 167, 69, 0.3)' : 'rgba(40, 167, 69, 0.2)'}`,
+                    boxShadow: selectedCycle === 'annual' ? '0 2px 8px rgba(40, 167, 69, 0.15)' : 'none',
                     transition: 'all 0.7s ease'
                   }}>
                     {formatBadgeDisplay(animatedBadgeNumber, selectedCycle)}
@@ -1602,17 +1628,6 @@ Only ₹{selectedCycle === 'annual' ? '1,250' : '1,667'}/month
                 </h3>
               </div>
               
-              <FeatureRow 
-                icon="user"
-                title="Profile Building"
-                description="Create and enhance your professional profile"
-                freemiumIcon="user"
-                freemiumText="Basic Profile Creation"
-                freemiumColor="#9AA0A6"
-                premiumIcon="brain"
-                premiumText="Enhanced + Video Resume + AI Optimization"
-                strategicRationale="The basic offering serves as an entry point, while Premium significantly enhances career impact through advanced features like video resumes and AI optimization."
-              />
 
               <FeatureRow 
                 icon="trophy"
@@ -1620,48 +1635,26 @@ Only ₹{selectedCycle === 'annual' ? '1,250' : '1,667'}/month
                 description="Participate in coding competitions and challenges"
                 freemiumIcon="check-circle"
                 freemiumText="Full Access"
-                freemiumColor="#28A745"
+                freemiumColor="#7A2187"
                 premiumIcon="check-circle"
                 premiumText="Full Access"
-                premiumColor="#28A745"
-                strategicRationale="Designed for maximum user engagement and data collection, ensuring both tiers can participate in these valuable events."
+                premiumColor="#7A2187"
+                strategicRationale="Builds platform engagement by offering full hackathon access to all users, demonstrating platform value while other exclusive features drive Premium upgrades."
               />
 
-              <FeatureRow 
-                icon="eye"
-                title="Corporate Visibility (Premium Candidate Pool)"
-                description="Enhanced visibility to potential employers"
-                freemiumIcon="eye-slash"
-                freemiumText="Not Available"
-                freemiumColor="#9AA0A6"
-                premiumIcon="star"
-                premiumText="Full Access"
-                strategicRationale="The outcome of career advancement creates aspiration and urgency, as Premium users gain enhanced visibility to potential employers."
-              />
 
               <FeatureRow 
                 icon="briefcase"
                 title="Career Opportunities"
-                description="Apply to job opportunities across all categories"
+                description="Apply to opportunities across all categories"
                 freemiumIcon="lock"
                 freemiumText="1 Opportunity Per Category"
                 freemiumColor="#9AA0A6"
                 premiumIcon="infinity"
                 premiumText="Unlimited + Priority Job Matching"
-                strategicRationale="Generates immediate conversion pressure by restricting free job search options, highlighting the value of unlimited and prioritized access in Premium."
+                strategicRationale="Creates clear value differentiation by limiting freemium users to one opportunity per category, showcasing the unlimited access and priority job matching benefits of Premium."
               />
 
-              <FeatureRow 
-                icon="user-graduate"
-                title="Expert Career Counseling"
-                description="Personalized guidance from industry professionals"
-                freemiumIcon="minus-circle"
-                freemiumText="Not Available"
-                freemiumColor="#9AA0A6"
-                premiumIcon="video"
-                premiumText="Weekly - 1 Free Call"
-                strategicRationale="Significantly increases retention and perceived value by offering personalized guidance and support to Premium members."
-              />
             </div>
 
             {/* Assessments */}
@@ -1692,14 +1685,14 @@ Only ₹{selectedCycle === 'annual' ? '1,250' : '1,667'}/month
               
               <FeatureRow 
                 icon="graduation-cap"
-                title="NCET Test Attempts"
-                description="National Career Enhancement Test attempts"
+                title="NCET Test"
+                description="National Competence and Employability Test"
                 freemiumIcon="exclamation-triangle"
-                freemiumText="1 Attempt Per Year"
+                freemiumText="1 Test Per Year"
                 freemiumColor="#FFC107"
                 premiumIcon="chart-bar"
-                premiumText="5 Attempts + Score Analytics"
-                strategicRationale="Designed to leverage performance improvement psychology, encouraging upgrades for users seeking more practice and deeper insights."
+                premiumText="NCET Test + Program with Live Training + Video Recorded Sessions for 1 Program"
+                strategicRationale="Motivates upgrades by offering comprehensive NCET preparation - Premium users get full test access plus live training and recorded video sessions for maximum career advancement."
               />
 
               <FeatureRow 
@@ -1711,7 +1704,7 @@ Only ₹{selectedCycle === 'annual' ? '1,250' : '1,667'}/month
                 freemiumColor="#FFC107"
                 premiumIcon="infinity"
                 premiumText="Unlimited Tests + Advanced Analytics"
-                strategicRationale="Creates upgrade urgency by limiting free access, prompting users to convert for comprehensive career exploration and advanced insights."
+                strategicRationale="Builds upgrade desire through strategic limitation - freemium users get 2 assessments to experience value, while Premium offers unlimited tests plus advanced analytics for deep career insights."
               />
             </div>
 
@@ -1750,19 +1743,23 @@ Only ₹{selectedCycle === 'annual' ? '1,250' : '1,667'}/month
                 freemiumColor="#9AA0A6"
                 premiumIcon="video"
                 premiumText="1 Program + Live Training Access + 1 Video Recorded Sessions"
-                strategicRationale="A high-value, exclusive offering that justifies the investment in the Premium tier through specialized programs and direct expert interaction."
+                strategicRationale="Represents premium exclusivity through access to the National Competence and Employability Test Plus program, providing specialized training and expert mentorship unavailable elsewhere."
               />
 
               <FeatureRow 
                 icon="map-marked-alt"
-                title="Career Recommendations"
-                description="Personalized AI-powered career guidance"
+                title={
+                  <span>
+                    Career Guidance & Roadmap
+                    <InfoButton content="Drives Premium conversions by offering basic career insights to freemium users while providing comprehensive, personalized AI-powered roadmaps based on individual aspirations and preferences to Premium subscribers." />
+                  </span>
+                }
+                description="AI-powered career planning and development strategies"
                 freemiumIcon="lock"
                 freemiumText="Basic Insights Only (20%)"
                 freemiumColor="#9AA0A6"
                 premiumIcon="brain"
-                premiumText="Full AI-Powered Career Roadmap"
-                strategicRationale="Creates a strong emotional trigger for upgrades by providing limited insights in the free tier and a comprehensive, AI-driven career roadmap in Premium."
+                premiumText="Personalized Roadmaps based on your Career Aspirations and Preferences"
               />
 
               <FeatureRow 
@@ -1770,11 +1767,11 @@ Only ₹{selectedCycle === 'annual' ? '1,250' : '1,667'}/month
                 title="Courses & Certification"
                 description="Access to skill development courses and certificates"
                 freemiumIcon="lock"
-                freemiumText="20% Course Access of 5 Courses - No Certificate"
+                freemiumText="Complete access to 2 courses"
                 freemiumColor="#9AA0A6"
                 premiumIcon="award"
                 premiumText="100% Access + Certificate"
-                strategicRationale="Implements strategic friction during the learning journey, motivating upgrades for full course access and official certification."
+                strategicRationale="Drives conversions by offering substantial value in freemium (2 complete courses) while reserving full access and official certification for Premium subscribers."
               />
             </div>
 
@@ -1806,14 +1803,14 @@ Only ₹{selectedCycle === 'annual' ? '1,250' : '1,667'}/month
               
               <FeatureRow 
                 icon="desktop"
-                title="Sandbox Pro Accessibility"
+                title="Sandbox Pro"
                 description="Advanced coding environments for practice"
-                freemiumIcon="exclamation-triangle"
-                freemiumText="5 Sandbox Instances"
-                freemiumColor="#FFC107"
+                freemiumIcon="infinity"
+                freemiumText="Unlimited"
+                freemiumColor="#7A2187"
                 premiumIcon="infinity"
                 premiumText="Unlimited"
-                strategicRationale="Provides limited exposure in the free tier, with unlimited access in Premium to showcase the full power of our AI-driven learning environment."
+                strategicRationale="Demonstrates platform value by providing unlimited sandbox access to all users, establishing trust while other premium features create upgrade motivation."
               />
 
               <FeatureRow 
@@ -1825,73 +1822,11 @@ Only ₹{selectedCycle === 'annual' ? '1,250' : '1,667'}/month
                 freemiumColor="#FFC107"
                 premiumIcon="robot"
                 premiumText="3 Capstone Projects - With AI Support"
-                strategicRationale="This differentiation is designed to upscale the practical learning experience and demonstrate the progressive value of our offerings."
+                strategicRationale="Creates learning progression incentive - freemium users get basic project experience while Premium unlocks advanced capstone projects with AI support for career portfolio development."
               />
 
-              <FeatureRow 
-                icon="user-tie"
-                title="Live Mentor Project Support"
-                description="Expert guidance for project development"
-                freemiumIcon="ban"
-                freemiumText="Not Available"
-                freemiumColor="#9AA0A6"
-                premiumIcon="video"
-                premiumText="Available - Weekly 1 Free Call Available"
-                strategicRationale="This feature serves as a critical differentiator and a high-value incentive for the Premium tier. While Freemium users can engage with projects independently, Premium users gain access to personalized, expert human guidance."
-              />
             </div>
 
-            {/* Add Ons */}
-            <div data-section-id="add-ons" style={{ marginBottom: '2.5rem' }}>
-              <div style={{
-                position: 'sticky',
-                top: '57px',
-                background: 'rgba(248, 249, 250, 0.95)',
-                backdropFilter: 'blur(10px)',
-                zIndex: 9,
-                padding: '1rem 1rem',
-                borderBottom: '2px solid #7A2187',
-                marginBottom: '1rem'
-              }}>
-                <h3 style={{
-                  fontSize: '1.375rem',
-                  fontWeight: '600',
-                  color: '#202124',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.75rem',
-                  margin: 0
-                }}>
-                  <i className="fas fa-plus" style={{ color: '#7A2187', fontSize: '1.125rem' }}></i>
-                  Add Ons
-                </h3>
-              </div>
-              
-              <FeatureRow 
-                icon="trophy"
-                title="Reward System"
-                description="Earn and redeem points for platform activities"
-                freemiumIcon="exclamation-triangle"
-                freemiumText="Rewards capped at 50% of maximum achievable points"
-                freemiumColor="#FFC107"
-                premiumIcon="star"
-                premiumText="Rewards Uncapped"
-                strategicRationale="Differentiates the user experience by offering enhanced incentives and recognition to Premium subscribers. Candidates can further use these reward points to redeem other items within the platform."
-              />
-
-              <FeatureRow 
-                icon="shield-alt"
-                title="Money Back Guarantee"
-                description="Risk-free trial period for new subscribers"
-                freemiumIcon="minus"
-                freemiumText="-"
-                freemiumColor="#9AA0A6"
-                premiumIcon="shield-check"
-                premiumText="Money Back Guarantee"
-                premiumColor="#28A745"
-                strategicRationale="An extended trial period that instills confidence and aims to increase conversion rates after users experience the full Premium benefits."
-              />
-            </div>
 
             {/* Gamified Learning and Additional Programs */}
             <div data-section-id="gamified-learning" style={{ marginBottom: '2.5rem' }}>
@@ -1919,28 +1854,17 @@ Only ₹{selectedCycle === 'annual' ? '1,250' : '1,667'}/month
                 </h3>
               </div>
               
-              <FeatureRow 
-                icon="chart-line"
-                title="Leaderboard"
-                description="Showcase your achievements and ranking"
-                freemiumIcon="user"
-                freemiumText="No Preferential Highlighting"
-                freemiumColor="#9AA0A6"
-                premiumIcon="crown"
-                premiumText="Highlighted as Premium Candidate"
-                strategicRationale="Showcases the value of Premium status by visually distinguishing subscribers on the leaderboard."
-              />
 
               <FeatureRow 
                 icon="rocket"
-                title="TalentX"
-                description="Access to exclusive talent marketplace"
+                title="Virtual Job Fairs"
+                description="Future Job Fairs - Free access"
                 freemiumIcon="ban"
                 freemiumText="Not Available"
                 freemiumColor="#9AA0A6"
                 premiumIcon="unlock"
                 premiumText="Full Access"
-                strategicRationale="Provides exclusive access to a high-value platform for Premium users."
+                strategicRationale="Creates significant Premium value through exclusive access to future virtual job fairs, directly impacting career opportunities and employment prospects."
               />
 
               <FeatureRow 
@@ -1952,8 +1876,8 @@ Only ₹{selectedCycle === 'annual' ? '1,250' : '1,667'}/month
                 freemiumColor="#9AA0A6"
                 premiumIcon="money-bill-wave"
                 premiumText="Exclusive Access + ₹25,000 Scholarship Chance"
-                premiumColor="#28A745"
-                strategicRationale="A high-value, exclusive incentive for Premium users, with eligibility criteria ensuring only top candidates can apply, driving aspirational upgrades."
+                premiumColor="#7A2187"
+                strategicRationale="Provides aspirational upgrade motivation through exclusive ₹25,000 scholarship opportunities, available only to Premium members who meet performance criteria."
               />
             </div>
 
@@ -2050,7 +1974,7 @@ Only ₹{selectedCycle === 'annual' ? '1,250' : '1,667'}/month
                   color: '#202124',
                   marginBottom: '1rem'
                 }}>
-                  Current Situation
+                  Without Premium
                 </h4>
                 
                 <p style={{
@@ -2502,8 +2426,8 @@ Only ₹{selectedCycle === 'annual' ? '1,250' : '1,667'}/month
               answer: "Yes! You can purchase specific services (like a course, mock test, or NCET Plus program) individually without upgrading to Premium."
             },
             {
-              question: "What's the difference between monthly and annual plans?",
-              answer: "The annual plan offers significant savings - you pay ₹15,000 instead of ₹24,000 (₹9,000 savings). The 6-month plan costs ₹10,000, saving you ₹4,000. All plans include the same premium features, but longer commitments offer better value."
+              question: "What's the difference between 6-month and annual plans?",
+              answer: "The annual plan offers significant savings - you pay ₹15,000 instead of ₹24,000 (₹9,000 savings). The 6-month plan costs ₹10,000, saving you ₹4,000 compared to ₹12,000. All plans include the same premium features, but longer commitments offer better value."
             },
             {
               question: "How does the 7-day money back guarantee work?",

@@ -1,3 +1,4 @@
+// Updated Pricing Page for First Release
 import React, { useState, useEffect, useRef } from 'react';
 import { ShimmerButton } from './src/components/magicui/shimmer-button';
 import { MagicCard } from './src/components/magicui/magic-card';

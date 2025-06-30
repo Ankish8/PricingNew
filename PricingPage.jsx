@@ -8,6 +8,7 @@ import { NumberTicker } from './src/components/magicui/number-ticker';
 import { AuroraText } from './src/components/magicui/aurora-text';
 import { RainbowButton } from './src/components/magicui/rainbow-button';
 import { InteractiveGridPattern } from './src/components/magicui/interactive-grid-pattern';
+import ContactModal from './src/components/ContactModal';
 import { GridPattern } from './src/components/magicui/grid-pattern';
 import { Ripple } from './src/components/magicui/ripple';
 import { FlickeringGrid } from './src/components/magicui/flickering-grid';
@@ -243,6 +244,7 @@ const useAnimatedNumber = (initialValue, duration = 700) => {
 const PricingPage = () => {
   const [selectedCycle, setSelectedCycle] = useState('annual');
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+  const [showContactModal, setShowContactModal] = useState(false);
   const [userPreviousPurchases, setUserPreviousPurchases] = useState(0); // Amount user has already spent
   
   // Demo: Simulate different user scenarios (remove in production)
@@ -1482,20 +1484,25 @@ Only ₹{selectedCycle === 'annual' ? '1,250' : '1,667'}/month
               margin: 0
             }}>
               Questions about pricing? 
-              <a 
-                href="mailto:support@matchplatform.com" 
+              <button 
+                onClick={() => setShowContactModal(true)}
                 style={{ 
                   color: '#7A2187', 
                   textDecoration: 'none', 
                   marginLeft: '0.5rem',
                   fontWeight: '600',
-                  transition: 'color 0.2s ease'
+                  transition: 'color 0.2s ease',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: 'inherit',
+                  padding: 0
                 }}
                 onMouseEnter={(e) => e.target.style.color = '#9B4AA3'}
                 onMouseLeave={(e) => e.target.style.color = '#7A2187'}
               >
                 Contact our team →
-              </a>
+              </button>
             </p>
           </div>
         </div>
@@ -2602,15 +2609,20 @@ Only ₹{selectedCycle === 'annual' ? '1,250' : '1,667'}/month
                     margin: 0
                   }}>
                     Need help choosing the right plan? 
-                    <a 
-                      href="mailto:support@matchplatform.com" 
+                    <button 
+                      onClick={() => setShowContactModal(true)}
                       style={{ 
                         color: 'white', 
                         textDecoration: 'none', 
                         marginLeft: '0.5rem',
                         fontWeight: '600',
                         borderBottom: '1px solid rgba(255, 255, 255, 0.5)',
-                        transition: 'all 0.2s ease'
+                        transition: 'all 0.2s ease',
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        fontSize: 'inherit',
+                        padding: 0
                       }}
                       onMouseEnter={(e) => {
                         e.target.style.borderBottomColor = 'white';
@@ -2622,7 +2634,7 @@ Only ₹{selectedCycle === 'annual' ? '1,250' : '1,667'}/month
                       }}
                     >
                       Talk to our experts
-                    </a>
+                    </button>
                   </p>
                 </div>
                 
@@ -2634,6 +2646,12 @@ Only ₹{selectedCycle === 'annual' ? '1,250' : '1,667'}/month
 
       {/* Premium Checkout Modal */}
       <PremiumCheckoutModal />
+      
+      {/* Contact Modal */}
+      <ContactModal 
+        isOpen={showContactModal} 
+        onClose={() => setShowContactModal(false)} 
+      />
     </div>
   );
 };

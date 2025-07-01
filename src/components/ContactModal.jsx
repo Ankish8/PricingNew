@@ -334,15 +334,19 @@ const ContactModal = ({ isOpen, onClose }) => {
                 type="button"
                 onClick={onClose}
                 style={{
-                  padding: '0.75rem 1.5rem',
+                  padding: '0 1.5rem',
+                  height: '2.75rem',
                   border: '1px solid #D1D5DB',
                   background: 'white',
                   color: '#6B7280',
-                  borderRadius: '6px',
+                  borderRadius: '12px',
                   fontSize: '0.9rem',
                   fontWeight: '500',
                   cursor: 'pointer',
-                  transition: 'all 0.2s ease'
+                  transition: 'all 0.2s ease',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
                 }}
                 onMouseEnter={(e) => {
                   e.target.style.background = '#F9FAFB';
@@ -361,6 +365,7 @@ const ContactModal = ({ isOpen, onClose }) => {
                 disabled={isSubmitting}
                 style={{
                   padding: '0.75rem 1.5rem',
+                  height: '2.75rem',
                   fontSize: '0.9rem',
                   fontWeight: '500',
                   opacity: isSubmitting ? 0.7 : 1,

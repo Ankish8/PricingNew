@@ -1,5 +1,6 @@
 // Updated Pricing Page for First Release
 import React, { useState, useEffect, useRef } from 'react';
+import { useSubscription } from './hooks/useSubscription';
 import { ShimmerButton } from './components/magicui/shimmer-button';
 import { MagicCard } from './components/magicui/magic-card';
 import { ShineBorder } from './components/magicui/shine-border';
@@ -242,6 +243,7 @@ const useAnimatedNumber = (initialValue, duration = 700) => {
 };
 
 const PricingPageAuthenticated = () => {
+  const { isPremium, isFreemium, isAuthenticated } = useSubscription();
   const [selectedCycle, setSelectedCycle] = useState('annual');
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
@@ -365,7 +367,7 @@ const PricingPageAuthenticated = () => {
               margin: '0 0 0.5rem 0',
               letterSpacing: '-0.01em'
             }}>
-              Get <AuroraText>Premium</AuroraText> Access
+              Your <AuroraText>Premium</AuroraText> Account
             </h2>
             
             <p style={{
@@ -374,7 +376,7 @@ const PricingPageAuthenticated = () => {
               margin: 0,
               lineHeight: '1.4'
             }}>
-              Unlock unlimited access to advance your career
+              You have unlimited access to advance your career
             </p>
           </div>
 
@@ -1163,12 +1165,12 @@ const PricingPageAuthenticated = () => {
                   borderRadius: '50%'
                 }}
               />
-              <span>Special Launch Pricing</span>
+              <span>Your Premium Account</span>
             </div>
             
-            <h2 className="section-title">Choose Your <AuroraText>Premium</AuroraText> Plan</h2>
+            <h2 className="section-title">Your <AuroraText>Premium</AuroraText> Account</h2>
             <p className="section-subtitle">
-              <strong style={{ color: '#7A2187', fontWeight: '700' }}>94% never reach their potential</strong> because they lack the right tools.
+              <strong style={{ color: '#7A2187', fontWeight: '700' }}>You have the right tools</strong> to reach your full potential.
             </p>
             
             {/* Billing Toggle */}
@@ -1448,22 +1450,40 @@ Only ₹{selectedCycle === 'annual' ? '1,250' : '1,667'}/month
                 </div>
               </div>
               
-              <RainbowButton 
-                className="w-full text-lg font-semibold"
-                style={{ 
-                  padding: '1rem 2rem', 
-                  borderRadius: '12px',
-                  background: '#7A2187',
-                  color: 'white'
-                }}
-                onClick={() => setShowCheckoutModal(true)}
-              >
-                Get Premium Now
-              </RainbowButton>
+              {isPremium ? (
+                <button 
+                  className="w-full text-lg font-semibold"
+                  style={{ 
+                    padding: '1rem 2rem', 
+                    borderRadius: '12px',
+                    background: '#E8D5EA',
+                    color: '#7A2187',
+                    border: '2px solid #7A2187',
+                    cursor: 'default',
+                    opacity: 0.8
+                  }}
+                  disabled
+                >
+                  Your Current Plan
+                </button>
+              ) : (
+                <RainbowButton 
+                  className="w-full text-lg font-semibold"
+                  style={{ 
+                    padding: '1rem 2rem', 
+                    borderRadius: '12px',
+                    background: '#7A2187',
+                    color: 'white'
+                  }}
+                  onClick={() => setShowCheckoutModal(true)}
+                >
+                  Get Premium Now
+                </RainbowButton>
+              )}
               <div className="trial-note" style={{ textAlign: 'center' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
                   <i className="fas fa-shield-alt" style={{ color: '#28A745', fontSize: '0.875rem' }}></i>
-                  <span>7-day money back guarantee*</span>
+                  <span>{isPremium ? 'Premium Support Available' : '7-day money back guarantee*'}</span>
                 </div>
               </div>
               
@@ -1536,7 +1556,7 @@ Only ₹{selectedCycle === 'annual' ? '1,250' : '1,667'}/month
               color: '#5F6368',
               marginBottom: '3rem'
             }}>
-              See exactly what you get with Premium across all platform features
+              See exactly what you have with Premium across all platform features
             </p>
           </div>
         </div>
@@ -1773,7 +1793,7 @@ Only ₹{selectedCycle === 'annual' ? '1,250' : '1,667'}/month
               <FeatureRow 
                 icon="certificate"
                 title="Courses & Certification"
-                description="Access to skill development courses and certificates"
+                description="Your skill development courses and certificates"
                 freemiumIcon="lock"
                 freemiumText="Complete access to 2 courses"
                 freemiumColor="#9AA0A6"
@@ -2066,7 +2086,7 @@ Only ₹{selectedCycle === 'annual' ? '1,250' : '1,667'}/month
                     color: 'white',
                     marginBottom: '1rem'
                   }}>
-                    With Premium Access
+                    Your Premium Access
                   </h4>
                   
                   <p style={{
@@ -2103,7 +2123,7 @@ Only ₹{selectedCycle === 'annual' ? '1,250' : '1,667'}/month
                         }}>
                           {item.includes('12x') ? (
                             <>
-                              Access <NumberTicker value={12} suffix="x more relevant opportunities" delay={index * 0.1 + 1.3} className="text-white font-semibold" />
+                              Your <NumberTicker value={12} suffix="x more relevant opportunities" delay={index * 0.1 + 1.3} className="text-white font-semibold" />
                             </>
                           ) : item.includes('4x') ? (
                             <>
@@ -2134,9 +2154,28 @@ Only ₹{selectedCycle === 'annual' ? '1,250' : '1,667'}/month
               alignItems: 'center',
               gap: '1.5rem'
             }}>
-              <RainbowButton onClick={() => setShowCheckoutModal(true)}>
-                Get Premium Now
-              </RainbowButton>
+              {isPremium ? (
+                <button 
+                  style={{ 
+                    padding: '1rem 2rem', 
+                    borderRadius: '12px',
+                    background: '#E8D5EA',
+                    color: '#7A2187',
+                    border: '2px solid #7A2187',
+                    cursor: 'default',
+                    opacity: 0.8,
+                    fontSize: '1rem',
+                    fontWeight: '600'
+                  }}
+                  disabled
+                >
+                  Your Current Plan
+                </button>
+              ) : (
+                <RainbowButton onClick={() => setShowCheckoutModal(true)}>
+                  Get Premium Now
+                </RainbowButton>
+              )}
               
               <div style={{
                 display: 'flex',
@@ -2362,7 +2401,7 @@ Only ₹{selectedCycle === 'annual' ? '1,250' : '1,667'}/month
               marginBottom: '0.75rem',
               lineHeight: '1.2'
             }}>
-              Your Peers Aren't Waiting. Why Are You?
+              You're Part of Our Growing Community
             </h2>
             
             <p style={{
@@ -2380,9 +2419,28 @@ Only ₹{selectedCycle === 'annual' ? '1,250' : '1,667'}/month
               alignItems: 'center',
               gap: '1rem'
             }}>
-              <RainbowButton onClick={() => setShowCheckoutModal(true)}>
-                Get Premium Now
-              </RainbowButton>
+              {isPremium ? (
+                <button 
+                  style={{ 
+                    padding: '1rem 2rem', 
+                    borderRadius: '12px',
+                    background: '#E8D5EA',
+                    color: '#7A2187',
+                    border: '2px solid #7A2187',
+                    cursor: 'default',
+                    opacity: 0.8,
+                    fontSize: '1rem',
+                    fontWeight: '600'
+                  }}
+                  disabled
+                >
+                  Your Current Plan
+                </button>
+              ) : (
+                <RainbowButton onClick={() => setShowCheckoutModal(true)}>
+                  Get Premium Now
+                </RainbowButton>
+              )}
               
               <div style={{
                 display: 'flex',
@@ -2518,7 +2576,7 @@ Only ₹{selectedCycle === 'annual' ? '1,250' : '1,667'}/month
                     color: 'white'
                   }}
                 >
-                  Your Career Can't Wait Any Longer
+                  Your Career is Already Moving Forward
                 </AuroraText>
                 
                 <p style={{
@@ -2528,7 +2586,7 @@ Only ₹{selectedCycle === 'annual' ? '1,250' : '1,667'}/month
                   marginBottom: '1rem',
                   textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)'
                 }}>
-                  While you're thinking about it, your peers are already getting ahead with Premium.
+                  You're already ahead with Premium access to exclusive opportunities.
                 </p>
                 
                 <p style={{
@@ -2539,7 +2597,7 @@ Only ₹{selectedCycle === 'annual' ? '1,250' : '1,667'}/month
                   textShadow: '0 1px 3px rgba(0, 0, 0, 0.3)',
                   fontStyle: 'italic'
                 }}>
-                  Don't let another opportunity slip by.
+                  Keep maximizing your Premium benefits.
                 </p>
                 
                 <div style={{ 
@@ -2547,18 +2605,40 @@ Only ₹{selectedCycle === 'annual' ? '1,250' : '1,667'}/month
                   position: 'relative',
                   display: 'inline-block'
                 }}>
-                  <RainbowButton 
-                    variant="outline"
-                    style={{ 
-                      fontSize: '1.2rem',
-                      padding: '1.25rem 3rem',
-                      fontWeight: '600',
-                      position: 'relative',
-                      zIndex: 1
-                    }}
-                  >
-                    Get Premium
-                  </RainbowButton>
+                  {isPremium ? (
+                    <button 
+                      style={{ 
+                        fontSize: '1.2rem',
+                        padding: '1.25rem 3rem',
+                        fontWeight: '600',
+                        position: 'relative',
+                        zIndex: 1,
+                        borderRadius: '12px',
+                        background: '#E8D5EA',
+                        color: '#7A2187',
+                        border: '2px solid #7A2187',
+                        cursor: 'default',
+                        opacity: 0.8
+                      }}
+                      disabled
+                    >
+                      Your Current Plan
+                    </button>
+                  ) : (
+                    <RainbowButton 
+                      variant="outline"
+                      style={{ 
+                        fontSize: '1.2rem',
+                        padding: '1.25rem 3rem',
+                        fontWeight: '600',
+                        position: 'relative',
+                        zIndex: 1
+                      }}
+                      onClick={() => setShowCheckoutModal(true)}
+                    >
+                      Get Premium
+                    </RainbowButton>
+                  )}
                   
                   {/* Animated Rainbow glow underneath */}
                   <div style={{

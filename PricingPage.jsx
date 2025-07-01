@@ -249,10 +249,8 @@ const PricingPage = () => {
   
   // Demo: Simulate different user scenarios (remove in production)
   useEffect(() => {
-    // Simulate 30% chance user has previous purchases between ₹200-800
-    if (Math.random() > 0.7) {
-      setUserPreviousPurchases(Math.floor(Math.random() * 600) + 200);
-    }
+    // Always show previous purchases coupon - set to 350 as shown in design
+    setUserPreviousPurchases(350);
   }, []);
   
   const priceData = {
@@ -1699,7 +1697,7 @@ Only ₹{selectedCycle === 'annual' ? '1,250' : '1,667'}/month
                 freemiumText="1 Test Per Year"
                 freemiumColor="#FFC107"
                 premiumIcon="chart-bar"
-                premiumText="NCET Test + Program with Live Training + Video Recorded Sessions for 1 Program"
+                premiumText="5 Tests + Score Analytics"
                 strategicRationale="Motivates upgrades by offering comprehensive NCET preparation - Premium users get full test access plus live training and recorded video sessions for maximum career advancement."
               />
 
@@ -1823,13 +1821,13 @@ Only ₹{selectedCycle === 'annual' ? '1,250' : '1,667'}/month
 
               <FeatureRow 
                 icon="project-diagram"
-                title="Capstone Projects & AI Support"
-                description="Real-world project development with AI assistance"
+                title="Capstone Projects"
+                description="Real-world project development"
                 freemiumIcon="exclamation-triangle"
-                freemiumText="1 Capstone Project - No AI Support"
+                freemiumText="1 Capstone Project"
                 freemiumColor="#FFC107"
-                premiumIcon="robot"
-                premiumText="3 Capstone Projects - With AI Support"
+                premiumIcon="project-diagram"
+                premiumText="3 Capstone Projects"
                 strategicRationale="Creates learning progression incentive - freemium users get basic project experience while Premium unlocks advanced capstone projects with AI support for career portfolio development."
               />
 

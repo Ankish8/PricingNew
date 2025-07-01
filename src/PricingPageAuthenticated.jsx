@@ -1699,7 +1699,7 @@ Only ₹{selectedCycle === 'annual' ? '1,250' : '1,667'}/month
                 freemiumText="1 Test Per Year"
                 freemiumColor="#FFC107"
                 premiumIcon="chart-bar"
-                premiumText="NCET Test + Program with Live Training + Video Recorded Sessions for 1 Program"
+                premiumText="5 Tests + Score Analytics"
                 strategicRationale="Motivates upgrades by offering comprehensive NCET preparation - Premium users get full test access plus live training and recorded video sessions for maximum career advancement."
               />
 

@@ -334,15 +334,20 @@ const ContactModal = ({ isOpen, onClose }) => {
                 type="button"
                 onClick={onClose}
                 style={{
-                  padding: '0.75rem 1.5rem',
+                  padding: '12px 24px',
                   border: '1px solid #D1D5DB',
                   background: 'white',
                   color: '#6B7280',
-                  borderRadius: '6px',
-                  fontSize: '0.9rem',
+                  borderRadius: '8px',
+                  fontSize: '14px',
                   fontWeight: '500',
                   cursor: 'pointer',
-                  transition: 'all 0.2s ease'
+                  transition: 'all 0.2s ease',
+                  height: '48px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  minWidth: '120px'
                 }}
                 onMouseEnter={(e) => {
                   e.target.style.background = '#F9FAFB';
@@ -356,19 +361,39 @@ const ContactModal = ({ isOpen, onClose }) => {
                 Cancel
               </button>
               
-              <RainbowButton 
+              <button
                 type="submit"
                 disabled={isSubmitting}
                 style={{
-                  padding: '0.75rem 1.5rem',
-                  fontSize: '0.9rem',
+                  padding: '12px 24px',
+                  border: 'none',
+                  background: '#7A2187',
+                  color: 'white',
+                  borderRadius: '8px',
+                  fontSize: '14px',
                   fontWeight: '500',
-                  opacity: isSubmitting ? 0.7 : 1,
-                  cursor: isSubmitting ? 'not-allowed' : 'pointer'
+                  cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.2s ease',
+                  height: '48px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  minWidth: '140px',
+                  opacity: isSubmitting ? 0.7 : 1
+                }}
+                onMouseEnter={(e) => {
+                  if (!isSubmitting) {
+                    e.target.style.background = '#581c60';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isSubmitting) {
+                    e.target.style.background = '#7A2187';
+                  }
                 }}
               >
                 {isSubmitting ? 'Sending...' : 'Send Message'}
-              </RainbowButton>
+              </button>
             </div>
           </form>
         )}

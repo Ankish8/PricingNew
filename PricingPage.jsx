@@ -7,6 +7,7 @@ import { NumberTicker } from './src/components/magicui/number-ticker';
 import { AuroraText } from './src/components/magicui/aurora-text';
 import { RainbowButton } from './src/components/magicui/rainbow-button';
 import { InteractiveGridPattern } from './src/components/magicui/interactive-grid-pattern';
+import ContactModal from './src/components/ContactModal';
 import { GridPattern } from './src/components/magicui/grid-pattern';
 import { Ripple } from './src/components/magicui/ripple';
 import { FlickeringGrid } from './src/components/magicui/flickering-grid';
@@ -14,13 +15,14 @@ import { RetroGrid } from './src/components/magicui/retro-grid';
 import Marquee from './src/components/magicui/marquee';
 import FAQAccordion from './src/components/magicui/faq-accordion';
 
-// MagicUI Pointer Component
-const Pointer = ({ children, content, side = 'top' }) => {
+// Info Button Component with Click Tooltip
+const InfoButton = ({ content, side = 'top' }) => {
   const [isVisible, setIsVisible] = React.useState(false);
   const [position, setPosition] = React.useState({ x: 0, y: 0 });
 
-  const handleMouseEnter = (e) => {
-    setIsVisible(true);
+  const handleClick = (e) => {
+    e.stopPropagation();
+    setIsVisible(!isVisible);
     const rect = e.currentTarget.getBoundingClientRect();
     setPosition({
       x: rect.left + rect.width / 2,
@@ -28,23 +30,50 @@ const Pointer = ({ children, content, side = 'top' }) => {
     });
   };
 
-  const handleMouseLeave = () => {
+  const handleClickOutside = React.useCallback((e) => {
     setIsVisible(false);
-  };
+  }, []);
+
+  React.useEffect(() => {
+    if (isVisible) {
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
+    }
+  }, [isVisible, handleClickOutside]);
 
   return (
     <>
-      <div
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        style={{ 
-          cursor: 'help',
-          display: 'inline-block',
-          transition: 'all 0.2s ease'
+      <button
+        onClick={handleClick}
+        style={{
+          background: 'rgba(122, 33, 135, 0.1)',
+          border: '1px solid rgba(122, 33, 135, 0.2)',
+          borderRadius: '50%',
+          width: '20px',
+          height: '20px',
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+          marginLeft: '8px',
+          fontSize: '12px',
+          fontWeight: '600',
+          color: '#7A2187',
+          transition: 'all 0.2s ease',
+          outline: 'none',
+          verticalAlign: 'middle'
+        }}
+        onMouseEnter={(e) => {
+          e.target.style.background = 'rgba(122, 33, 135, 0.15)';
+          e.target.style.borderColor = 'rgba(122, 33, 135, 0.3)';
+        }}
+        onMouseLeave={(e) => {
+          e.target.style.background = 'rgba(122, 33, 135, 0.1)';
+          e.target.style.borderColor = 'rgba(122, 33, 135, 0.2)';
         }}
       >
-        {children}
-      </div>
+        i
+      </button>
       {isVisible && (
         <div
           style={{
@@ -53,8 +82,9 @@ const Pointer = ({ children, content, side = 'top' }) => {
             top: position.y,
             transform: 'translateX(-50%) translateY(-100%)',
             zIndex: 1000,
-            pointerEvents: 'none'
+            pointerEvents: 'auto'
           }}
+          onClick={(e) => e.stopPropagation()}
         >
           <div
             style={{
@@ -123,21 +153,18 @@ const FeatureRow = ({
     <div>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.375rem' }}>
         {strategicRationale ? (
-          <Pointer content={strategicRationale}>
             <h4 style={{ 
               fontSize: '1rem', 
               fontWeight: '600', 
               color: '#202124', 
               margin: 0,
-              transition: 'color 0.2s ease'
-            }}
-            onMouseEnter={(e) => e.target.style.color = '#7A2187'}
-            onMouseLeave={(e) => e.target.style.color = '#202124'}
-            >
+              display: 'flex',
+              alignItems: 'center'
+            }}>
               <i className={`fas fa-${icon}`} style={{ color: '#7A2187', marginRight: '0.5rem', fontSize: '0.875rem' }}></i>
               {title}
+              <InfoButton content={strategicRationale} />
             </h4>
-          </Pointer>
         ) : (
           <h4 style={{ fontSize: '1rem', fontWeight: '600', color: '#202124', margin: 0 }}>
             <i className={`fas fa-${icon}`} style={{ color: '#7A2187', marginRight: '0.5rem', fontSize: '0.875rem' }}></i>
@@ -203,6 +230,7 @@ const useAnimatedNumber = (initialValue, duration = 700) => {
 const PricingPage = () => {
   const [selectedCycle, setSelectedCycle] = useState('annual');
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+  const [showContactModal, setShowContactModal] = useState(false);
   const [userPreviousPurchases, setUserPreviousPurchases] = useState(0); // Amount user has already spent
   
   // Demo: Simulate different user scenarios (remove in production)
@@ -1142,12 +1170,12 @@ const PricingPage = () => {
                 style={{
                   background: '#FFFFFF',
                   borderRadius: '12px',
-                  padding: '0.5rem',
+                  padding: '0.375rem',
                   boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
                   position: 'relative',
                   display: 'flex',
-                  gap: '0.5rem',
-                  width: 'fit-content'
+                  maxWidth: '340px',
+                  width: '100%'
                 }}
               >
                 {['annual', 'halfyearly', 'monthly'].map((cycle) => {
@@ -1166,13 +1194,14 @@ const PricingPage = () => {
                       }
                       style={{
                         height: '44px',
-                        padding: '0.5rem 1rem',
+                        padding: '0.5rem 0.75rem',
                         border: 'none',
                         background: 'transparent',
                         borderRadius: '8px',
                         fontWeight: isAnnual ? '700' : '600',
                         fontSize: '0.9rem',
-                        margin: '0 0.125rem',
+                        margin: '0 0.075rem',
+                        flex: '1',
                         color: isSelected ? '#FFFFFF' : (isAnnual ? '#202124' : '#80868B'),
                         cursor: 'pointer',
                         transition: 'all 0.3s ease',
@@ -1197,10 +1226,10 @@ const PricingPage = () => {
                       'linear-gradient(135deg, #7A2187 0%, #9B4AA3 100%)' : '#7A2187',
                     borderRadius: '8px',
                     transition: 'all 0.3s ease',
-                    top: '0.5rem',
-                    left: '0.5rem',
-                    width: 'calc(33.333% - 0.333rem)',
-                    height: 'calc(100% - 1rem)',
+                    top: '0.375rem',
+                    left: 'calc(0.375rem + 0.075rem)',
+                    width: 'calc(33.333% - 0.25rem)',
+                    height: 'calc(100% - 0.75rem)',
                     zIndex: 1,
                     transform: selectedCycle === 'annual' ? 'translateX(0%)' : 
                                selectedCycle === 'halfyearly' ? 'translateX(100%)' : 
@@ -1233,7 +1262,7 @@ const PricingPage = () => {
                 </div>
                 <div className="feature-item limited">
                   <i className="fas fa-exclamation-triangle feature-icon" style={{ color: '#FFC107' }}></i>
-                  <span>1 NCET test attempt/year</span>
+                  <span>1 NCET test/year</span>
                 </div>
                 <div className="feature-item limited">
                   <i className="fas fa-exclamation-triangle feature-icon" style={{ color: '#FFC107' }}></i>
@@ -1250,6 +1279,10 @@ const PricingPage = () => {
                 <div className="feature-item limited">
                   <i className="fas fa-ban feature-icon" style={{ color: '#DC3545' }}></i>
                   <span>No certificates</span>
+                </div>
+                <div className="feature-item limited">
+                  <i className="fas fa-ban feature-icon" style={{ color: '#DC3545' }}></i>
+                  <span>No live mentorship support</span>
                 </div>
               </div>
               
@@ -1455,20 +1488,24 @@ Only ₹{selectedCycle === 'annual' ? '1,250' : '1,667'}/month
               margin: 0
             }}>
               Questions about pricing? 
-              <a 
-                href="mailto:support@matchplatform.com" 
+              <button 
+                onClick={() => setShowContactModal(true)}
                 style={{ 
                   color: '#7A2187', 
                   textDecoration: 'none', 
                   marginLeft: '0.5rem',
                   fontWeight: '600',
-                  transition: 'color 0.2s ease'
+                  transition: 'color 0.2s ease',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: 'inherit'
                 }}
                 onMouseEnter={(e) => e.target.style.color = '#9B4AA3'}
                 onMouseLeave={(e) => e.target.style.color = '#7A2187'}
               >
                 Contact our team →
-              </a>
+              </button>
             </p>
           </div>
         </div>
@@ -1692,8 +1729,8 @@ Only ₹{selectedCycle === 'annual' ? '1,250' : '1,667'}/month
               
               <FeatureRow 
                 icon="graduation-cap"
-                title="NCET Test Attempts"
-                description="National Career Enhancement Test attempts"
+                title="NCET Test"
+                description="National Competence and Employability Test"
                 freemiumIcon="exclamation-triangle"
                 freemiumText="1 Attempt Per Year"
                 freemiumColor="#FFC107"
@@ -1755,8 +1792,8 @@ Only ₹{selectedCycle === 'annual' ? '1,250' : '1,667'}/month
 
               <FeatureRow 
                 icon="map-marked-alt"
-                title="Career Recommendations"
-                description="Personalized AI-powered career guidance"
+                title="Career Guidance & Roadmap"
+                description="Personalized career guidance and development roadmap"
                 freemiumIcon="lock"
                 freemiumText="Basic Insights Only (20%)"
                 freemiumColor="#9AA0A6"
@@ -2677,15 +2714,20 @@ Only ₹{selectedCycle === 'annual' ? '1,250' : '1,667'}/month
                     margin: 0
                   }}>
                     Need help choosing the right plan? 
-                    <a 
-                      href="mailto:support@matchplatform.com" 
+                    <button 
+                      onClick={() => setShowContactModal(true)}
                       style={{ 
                         color: 'white', 
                         textDecoration: 'none', 
                         marginLeft: '0.5rem',
                         fontWeight: '600',
                         borderBottom: '1px solid rgba(255, 255, 255, 0.5)',
-                        transition: 'all 0.2s ease'
+                        transition: 'all 0.2s ease',
+                        background: 'none',
+                        border: 'none',
+                        borderBottom: '1px solid rgba(255, 255, 255, 0.5)',
+                        cursor: 'pointer',
+                        fontSize: 'inherit'
                       }}
                       onMouseEnter={(e) => {
                         e.target.style.borderBottomColor = 'white';
@@ -2697,7 +2739,7 @@ Only ₹{selectedCycle === 'annual' ? '1,250' : '1,667'}/month
                       }}
                     >
                       Talk to our experts
-                    </a>
+                    </button>
                   </p>
                 </div>
                 
@@ -2709,6 +2751,12 @@ Only ₹{selectedCycle === 'annual' ? '1,250' : '1,667'}/month
 
       {/* Premium Checkout Modal */}
       <PremiumCheckoutModal />
+      
+      {/* Contact Modal */}
+      <ContactModal 
+        isOpen={showContactModal} 
+        onClose={() => setShowContactModal(false)} 
+      />
     </div>
   );
 };

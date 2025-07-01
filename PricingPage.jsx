@@ -2721,7 +2721,6 @@ Only ₹{selectedCycle === 'annual' ? '1,250' : '1,667'}/month
                         textDecoration: 'none', 
                         marginLeft: '0.5rem',
                         fontWeight: '600',
-                        borderBottom: '1px solid rgba(255, 255, 255, 0.5)',
                         transition: 'all 0.2s ease',
                         background: 'none',
                         border: 'none',

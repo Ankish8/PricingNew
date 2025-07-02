@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 const Dashboard = () => {
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
-  const [planType, setPlanType] = useState('halfyearly'); // 'halfyearly' or 'yearly'
+  const [planType, setPlanType] = useState('premium'); // 'lite' or 'premium'
 
   const primaryColor = '#581c60'; // From your color palette
   const primaryDark = '#4c1d5c';
@@ -332,11 +332,11 @@ const Dashboard = () => {
                   border: '1px solid #cbd5e1'
                 }}>
                   <button 
-                    onClick={() => setPlanType('halfyearly')}
+                    onClick={() => setPlanType('lite')}
                     style={{
                       padding: '6px 12px',
-                      background: planType === 'halfyearly' ? '#581c60' : 'transparent',
-                      color: planType === 'halfyearly' ? 'white' : '#6b7280',
+                      background: planType === 'lite' ? '#581c60' : 'transparent',
+                      color: planType === 'lite' ? 'white' : '#6b7280',
                       border: 'none',
                       borderRadius: '4px',
                       fontSize: '12px',
@@ -344,14 +344,14 @@ const Dashboard = () => {
                       cursor: 'pointer'
                     }}
                   >
-                    6-Month User
+                    Premium Lite (₹7K/6mo)
                   </button>
                   <button 
-                    onClick={() => setPlanType('yearly')}
+                    onClick={() => setPlanType('premium')}
                     style={{
                       padding: '6px 12px',
-                      background: planType === 'yearly' ? '#581c60' : 'transparent',
-                      color: planType === 'yearly' ? 'white' : '#6b7280',
+                      background: planType === 'premium' ? '#581c60' : 'transparent',
+                      color: planType === 'premium' ? 'white' : '#6b7280',
                       border: 'none',
                       borderRadius: '4px',
                       fontSize: '12px',
@@ -359,7 +359,7 @@ const Dashboard = () => {
                       cursor: 'pointer'
                     }}
                   >
-                    Yearly User
+                    Premium (₹20K/6mo)
                   </button>
                 </div>
                 
@@ -454,7 +454,7 @@ const Dashboard = () => {
                   }}>
                     <span style={{ color: '#6b7280', fontSize: '13px', fontWeight: '500' }}>Plan Type</span>
                     <span style={{ color: '#581c60', fontSize: '13px', fontWeight: '600' }}>
-                      {planType === 'halfyearly' ? 'Premium 6-Month' : 'Premium Yearly'}
+                      {planType === 'lite' ? 'Premium Lite' : 'Premium'}
                     </span>
                   </div>
                   
@@ -467,7 +467,20 @@ const Dashboard = () => {
                   }}>
                     <span style={{ color: '#6b7280', fontSize: '13px', fontWeight: '500' }}>Amount Paid</span>
                     <span style={{ color: '#111827', fontSize: '13px', fontWeight: '600' }}>
-                      {planType === 'halfyearly' ? '₹20,000' : '₹15,000'}
+                      {planType === 'lite' ? '₹7,000' : '₹20,000'}
+                    </span>
+                  </div>
+                  
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '10px 0',
+                    borderBottom: '1px solid #f3f4f6'
+                  }}>
+                    <span style={{ color: '#6b7280', fontSize: '13px', fontWeight: '500' }}>Duration</span>
+                    <span style={{ color: '#111827', fontSize: '13px', fontWeight: '600' }}>
+                      6 months
                     </span>
                   </div>
                   
@@ -480,7 +493,7 @@ const Dashboard = () => {
                   }}>
                     <span style={{ color: '#6b7280', fontSize: '13px', fontWeight: '500' }}>Next Billing</span>
                     <span style={{ color: '#111827', fontSize: '13px', fontWeight: '600' }}>
-                      {planType === 'halfyearly' ? 'June 30, 2025' : 'December 30, 2025'}
+                      June 30, 2025
                     </span>
                   </div>
                   
@@ -507,7 +520,7 @@ const Dashboard = () => {
                 flexDirection: 'column',
                 boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
               }}>
-                {planType === 'halfyearly' ? (
+                {planType === 'lite' ? (
                   <>
                     <div style={{
                       display: 'flex',
@@ -518,15 +531,15 @@ const Dashboard = () => {
                       <div style={{
                         width: '40px',
                         height: '40px',
-                        background: 'rgba(245, 158, 11, 0.1)',
+                        background: 'rgba(59, 130, 246, 0.1)',
                         borderRadius: '12px',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        border: '1px solid rgba(245, 158, 11, 0.2)'
+                        border: '1px solid rgba(59, 130, 246, 0.2)'
                       }}>
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M13 2L3 14h8l-2 8 10-12h-8l2-8z"/>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
                         </svg>
                       </div>
                       <h3 style={{
@@ -535,13 +548,13 @@ const Dashboard = () => {
                         color: '#111827',
                         margin: 0
                       }}>
-                        Upgrade Available
+                        Premium Lite Active
                       </h3>
                     </div>
 
                     <div style={{
-                      background: 'linear-gradient(135deg, #fefbf3 0%, #fdf6e3 100%)',
-                      border: '1px solid rgba(245, 158, 11, 0.3)',
+                      background: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)',
+                      border: '1px solid rgba(59, 130, 246, 0.3)',
                       borderRadius: '12px',
                       padding: '18px',
                       marginBottom: '16px',
@@ -554,7 +567,7 @@ const Dashboard = () => {
                         left: 0,
                         right: 0,
                         height: '2px',
-                        background: 'linear-gradient(90deg, #f59e0b 0%, #d97706 100%)'
+                        background: 'linear-gradient(90deg, #3b82f6 0%, #1d4ed8 100%)'
                       }}></div>
                       <h4 style={{
                         fontSize: '14px',
@@ -562,29 +575,29 @@ const Dashboard = () => {
                         color: '#111827',
                         margin: '0 0 6px 0'
                       }}>
-                        Switch to Yearly Plan
+                        Premium Lite Features Active
                       </h4>
                       <p style={{
                         fontSize: '12px',
-                        color: '#92400e',
+                        color: '#1e40af',
                         margin: '0 0 14px 0',
                         lineHeight: '1.4'
                       }}>
-                        Save ₹5,000 and get priority support
+                        ₹7,000 for 6 months of premium access. Contact support to upgrade to full Premium.
                       </p>
                       <button style={{
                         width: '100%',
                         padding: '12px',
-                        background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                        background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
                         border: 'none',
                         borderRadius: '8px',
                         color: 'white',
                         fontSize: '13px',
                         fontWeight: '600',
                         cursor: 'pointer',
-                        boxShadow: '0 2px 4px rgba(245, 158, 11, 0.3)'
+                        boxShadow: '0 2px 4px rgba(59, 130, 246, 0.3)'
                       }}>
-                        Upgrade to Yearly
+                        Contact Support for Upgrade
                       </button>
                     </div>
                   </>
@@ -607,8 +620,7 @@ const Dashboard = () => {
                         border: '1px solid rgba(5, 150, 105, 0.2)'
                       }}>
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M9 12l2 2 4-4"/>
-                          <path d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z"/>
+                          <path d="M20 6L9 17l-5-5"/>
                         </svg>
                       </div>
                       <h3 style={{
@@ -617,7 +629,7 @@ const Dashboard = () => {
                         color: '#111827',
                         margin: 0
                       }}>
-                        Premium Benefits
+                        Premium Active - ₹20,000/6 months
                       </h3>
                     </div>
 
@@ -644,16 +656,44 @@ const Dashboard = () => {
                         color: '#111827',
                         margin: '0 0 6px 0'
                       }}>
-                        Yearly Plan Active
+                        All Premium Features Active
                       </h4>
                       <p style={{
                         fontSize: '12px',
                         color: '#065f46',
-                        margin: '0',
+                        margin: '0 0 12px 0',
                         lineHeight: '1.4'
                       }}>
-                        You're saving ₹5,000 annually with priority support included
+                        ₹20,000 for 6 months of premium access & exclusive benefits
                       </p>
+                      
+                      {/* Key Premium Benefits */}
+                      <div style={{ 
+                        display: 'grid', 
+                        gap: '8px',
+                        marginTop: '12px' 
+                      }}>
+                        {[
+                          { icon: 'fas fa-infinity', text: 'Unlimited job applications' },
+                          { icon: 'fas fa-video', text: 'Exclusive live training' },
+                          { icon: 'fas fa-phone-alt', text: 'Weekly mentor calls' }
+                        ].map((benefit, idx) => (
+                          <div key={idx} style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            fontSize: '12px',
+                            color: '#047857'
+                          }}>
+                            <i className={benefit.icon} style={{ 
+                              color: '#059669', 
+                              fontSize: '10px',
+                              width: '12px' 
+                            }}></i>
+                            <span>{benefit.text}</span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </>
                 )}
@@ -740,7 +780,7 @@ const Dashboard = () => {
                         color: '#6b7280',
                         margin: 0
                       }}>
-                        All premium features are active and available for use
+                        Both plans have identical features except live training in NCET Plus program
                       </p>
                     </div>
                   </div>
@@ -760,48 +800,75 @@ const Dashboard = () => {
 
                 <div style={{
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))',
-                  gap: '24px'
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+                  gap: '20px'
                 }}>
                   {[
-                    { name: 'Profile Building', desc: 'Full access + AI resume builder', icon: 'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8z', color: '#581c60' },
-                    { name: 'Unlimited Applications', desc: 'Apply to unlimited positions', icon: 'M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16M8 8h8M8 12h8', color: '#7c3aed' },
-                    { name: 'Corporate Visibility', desc: 'Direct employer access to your profile', icon: 'M3 21h18M5 21V7l8-4v18M19 21V11l-6-4', color: '#2563eb' },
-                    { name: 'Career Assessment', desc: 'Complete psychometric test suite', icon: 'M9 11H3v8h6m0 0l3-3m6 1h6v-8h-6m0 0l-3 3M9 7h6a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z', color: '#059669' },
-                    { name: 'AI Assistance', desc: 'Smart career guidance & recommendations', icon: 'M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 1 1 7.072 0l-.548.547A3.374 3.374 0 0 0 18 18.469V19a2 2 0 1 1-4 0v-.531c0-.895-.356-1.754-.988-2.386L11.663 15a5 5 0 0 1-1.11-2.02', color: '#dc2626' },
-                    { name: 'Mentor Support', desc: 'One-on-one mentorship sessions', icon: 'M17 20h5v-2a3 3 0 0 0-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 0 1 5.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 0 1 9.288 0M15 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0zm6 3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM7 10a2 2 0 1 1-4 0 2 2 0 0 1 4 0z', color: '#7c2d12' },
-                    { name: 'NCET Attempts', desc: '5 premium test attempts included', icon: 'M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 0 0 1.946-.806 3.42 3.42 0 0 1 4.438 0 3.42 3.42 0 0 0 1.946.806 3.42 3.42 0 0 1 3.138 3.138 3.42 3.42 0 0 0 .806 1.946 3.42 3.42 0 0 1 0 4.438 3.42 3.42 0 0 0-.806 1.946 3.42 3.42 0 0 1-3.138 3.138 3.42 3.42 0 0 0-1.946.806 3.42 3.42 0 0 1-4.438 0 3.42 3.42 0 0 0-1.946-.806 3.42 3.42 0 0 1-3.138-3.138 3.42 3.42 0 0 0-.806-1.946 3.42 3.42 0 0 1 0-4.438 3.42 3.42 0 0 0 .806-1.946 3.42 3.42 0 0 1 3.138-3.138z', color: '#16a34a' },
-                    { name: 'NCET Plus', desc: 'Advanced features & detailed analytics', icon: 'M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 0 0 .95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 0 0-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 0 0-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 0 0-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 0 0 .951-.69l1.519-4.674z', color: '#ea580c' },
-                    { name: 'Sandbox Instances', desc: 'Unlimited practice environments', icon: 'M5 12V7a1 1 0 0 1 1-1h4l2 2h4a1 1 0 0 1 1 1v3M5 12l-2 7h14l-2-7M5 12h14', color: '#0891b2' },
-                    { name: 'Capstone Projects', desc: '3 industry-level projects included', icon: 'M19.428 15.428a2 2 0 0 0-1.022-.547l-2.387-.477a6 6 0 0 0-3.86.517l-.318.158a6 6 0 0 1-3.86.517L6.05 15.21a2 2 0 0 0-1.806.547M8 4h8l-1 1v5.172a2 2 0 0 0 .586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 0 0 9 10.172V5L8 4z', color: '#9333ea' },
-                    { name: 'TalentX Program', desc: 'Exclusive opportunities & networking', icon: 'M13.828 10.172a4 4 0 0 0-7.656 0l-.828 2.484a2 2 0 0 0 1.897 2.616h6.518a2 2 0 0 0 1.897-2.616l-.828-2.484zM8 8v4M12 8v4', color: '#be185d' },
-                    { name: 'Wave Scholarship', desc: 'Eligible for premium scholarships', icon: 'M12 14l9-5-9-5-9 5 9 5zM12 14l6.16-3.422a12.083 12.083 0 0 1 .665 6.479A11.952 11.952 0 0 0 12 20.055a11.952 11.952 0 0 0-6.824-2.998 12.078 12.078 0 0 1 .665-6.479L12 14z', color: '#0f766e' }
-                  ].map((feature, index) => (
-                    <div key={index} style={{
+                    { name: 'Hackathons', desc: 'Participate in coding competitions and challenges', icon: 'fas fa-trophy', color: '#7A2187' },
+                    { name: 'Career Opportunities', desc: 'Unlimited + Priority Job Matching', icon: 'fas fa-briefcase', color: '#7A2187' },
+                    { name: 'NCET Test', desc: 'NCET Test + Program + Video Recorded Sessions', icon: 'fas fa-graduation-cap', color: '#7A2187' },
+                    { name: 'Career Assessments', desc: 'Unlimited Tests + Advanced Analytics', icon: 'fas fa-clipboard-check', color: '#7A2187' },
+                    { name: 'NCET Plus Programs', desc: planType === 'lite' ? 'Live Training Program - Upgrade to Premium' : '1 Program + Live Training + Video Recorded Sessions', icon: 'fas fa-plus-circle', color: '#7A2187', premiumOnly: true },
+                    { name: 'Career Guidance & Roadmap', desc: 'Personalized Roadmaps based on your Career Aspirations and Preferences', icon: 'fas fa-map-marked-alt', color: '#7A2187' },
+                    { name: 'Courses & Certification', desc: '100% Access + Certificate', icon: 'fas fa-certificate', color: '#7A2187' },
+                    { name: 'Sandbox Pro', desc: 'Advanced coding environments for practice', icon: 'fas fa-desktop', color: '#7A2187' },
+                    { name: 'Capstone Projects & AI Support', desc: '3 Capstone Projects - With AI Support', icon: 'fas fa-project-diagram', color: '#7A2187' }
+                  ].map((feature, index) => {
+                    const isUnavailable = feature.premiumOnly && planType === 'lite';
+                    
+                    return (
+                      <div key={index} style={{
                       display: 'flex',
                       alignItems: 'flex-start',
                       gap: '16px',
                       padding: '20px',
-                      background: '#fafbfc',
+                      background: isUnavailable ? '#f9fafb' : '#fafbfc',
                       borderRadius: '12px',
-                      border: '1px solid #f1f5f9',
-                      boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
+                      border: `1px solid ${isUnavailable ? '#e5e7eb' : '#f1f5f9'}`,
+                      boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+                      opacity: isUnavailable ? 0.6 : 1,
+                      position: 'relative'
                     }}>
+                      {isUnavailable && (
+                        <div style={{
+                          position: 'absolute',
+                          top: '12px',
+                          right: '12px',
+                          background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
+                          color: '#92400e',
+                          padding: '4px 8px',
+                          borderRadius: '6px',
+                          fontSize: '10px',
+                          fontWeight: '600',
+                          border: '1px solid #fbbf24'
+                        }}>
+                          UPGRADE REQUIRED
+                        </div>
+                      )}
+                      
                       <div style={{
-                        width: '36px',
-                        height: '36px',
-                        background: `${feature.color}15`,
-                        border: `1px solid ${feature.color}30`,
-                        borderRadius: '10px',
+                        width: '44px',
+                        height: '44px',
+                        background: `linear-gradient(135deg, ${feature.color}20 0%, ${feature.color}10 100%)`,
+                        border: `2px solid ${feature.color}40`,
+                        borderRadius: '12px',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         flexShrink: 0,
-                        marginTop: '2px'
+                        marginTop: '2px',
+                        boxShadow: `0 4px 12px ${feature.color}20`,
+                        transition: 'all 0.3s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.transform = 'scale(1.1)';
+                        e.target.style.boxShadow = `0 6px 20px ${feature.color}30`;
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.transform = 'scale(1)';
+                        e.target.style.boxShadow = `0 4px 12px ${feature.color}20`;
                       }}>
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill={feature.color} stroke={feature.color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                          <path d={feature.icon}/>
-                        </svg>
+                        <i className={feature.icon} style={{ color: feature.color, fontSize: '22px' }}></i>
                       </div>
                       <div style={{ flex: 1 }}>
                         <h5 style={{
@@ -823,7 +890,8 @@ const Dashboard = () => {
                         </p>
                       </div>
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 
